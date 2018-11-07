@@ -294,6 +294,10 @@ namespace stateObservation
       inline bool isMatrixSet() const;
       inline bool isQuaternionSet() const;
 
+
+      ///synchronizes the representations (quaternion and rotation matrix)
+      inline void synchronize();
+
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 

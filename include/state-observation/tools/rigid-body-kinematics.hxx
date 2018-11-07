@@ -792,6 +792,25 @@ namespace stateObservation
       return (isMatrixSet() || q_.isSet());
     }
 
+    inline void Orientation::synchronize()
+    {
+      check_();
+      if (isMatrixSet())
+      {
+        if (!isQuaternionSet())
+        {
+          matrixToQuaternion_();
+        }
+      }
+      else
+      {
+        if (isQuaternionSet())
+        {
+          quaternionToMatrix_();
+        }
+      }
+    }
+
     inline void Orientation::reset()
     {
       q_.reset();
