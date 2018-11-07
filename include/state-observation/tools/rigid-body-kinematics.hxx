@@ -518,6 +518,11 @@ namespace stateObservation
     {
     }
 
+    inline Orientation::Orientation(const double& roll, const double & pitch, const double & yaw):
+      q_(kine::rollPitchYawToQuaternion(roll,pitch,yaw))
+    {
+    }
+
     inline Orientation & Orientation::operator=(const Vector3& v)
     {
       m_.reset();
@@ -587,6 +592,57 @@ namespace stateObservation
       else
       {
         return Quaternion(m_());
+      }
+    }
+
+    inline Vector3 Orientation::toRotationVector() const
+    {
+      check_();
+      if (isQuaternionSet() )
+      {
+        return kine::quaternionToRotationVector(q_());
+      }
+      else
+      {
+        return kine::rotationMatrixToRotationVector(m_());
+      }
+    }
+
+    inline Vector3 Orientation::toRollPitchYaw() const
+    {
+      check_();
+      if (isMatrixSet())
+      {
+        return kine::rotationMatrixToRollPitchYaw(m_());
+      }
+      else
+      {
+        return kine::rotationMatrixToRollPitchYaw(q_().toRotationMatrix());
+      }
+    }
+
+    inline Vector3 Orientation::toRollPitchYaw()
+    {
+      check_();
+      if (!isMatrixSet())
+      {
+        quaternionToMatrix_();
+      }
+      else
+        return kine::rotationMatrixToRollPitchYaw(m_());
+
+    }
+
+    inline AngleAxis Orientation::toAngleAxis() const
+    {
+      check_();
+      if (isMatrixSet())
+      {
+        return AngleAxis(m_());
+      }
+      else
+      {
+        return AngleAxis(q_());
       }
     }
 
