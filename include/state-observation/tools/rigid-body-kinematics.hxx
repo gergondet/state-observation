@@ -571,7 +571,7 @@ namespace stateObservation
     inline Orientation::operator Matrix3() const
     {
       check_();
-      if (!m_.isSet())
+      if (!isMatrixSet())
       {
         return q_().toRotationMatrix();
       }
@@ -585,7 +585,7 @@ namespace stateObservation
     inline Orientation::operator Quaternion() const
     {
       check_();
-      if (!q_.isSet())
+      if (isQuaternionSet() )
       {
         return q_();
       }
@@ -649,7 +649,7 @@ namespace stateObservation
     inline const Matrix3& Orientation::getMatrixRef()
     {
       check_();
-      if (!m_.isSet())
+      if (!isMatrixSet())
       {
         quaternionToMatrix_();
       }
@@ -659,7 +659,7 @@ namespace stateObservation
     inline const Quaternion& Orientation::getQuaternionRef()
     {
       check_();
-      if (!q_.isSet())
+      if (!isQuaternionSet() )
       {
         matrixToQuaternion_();
       }
@@ -670,9 +670,9 @@ namespace stateObservation
     {
       check_();
       R2.check_();
-      if (q_.isSet() && R2.q_.isSet())
+      if (isQuaternionSet()  && R2.isQuaternionSet() )
       {
-        if (m_.isSet() && R2.m_.isSet())
+        if (isMatrixSet() && R2.isMatrixSet())
         {
           return Orientation(Matrix3(m_()*R2.m_()));
         }
@@ -681,7 +681,7 @@ namespace stateObservation
           return Orientation(q_()*R2.q_(),m_()*R2.m_());
         }
       }
-      else if (q_.isSet())
+      else if (isQuaternionSet() )
       {
         return Orientation(Matrix3(quaternionToMatrix_()*R2.m_()));
       }
@@ -695,9 +695,9 @@ namespace stateObservation
     {
       check_();
       R2.check_();
-      if (q_.isSet() && R2.q_.isSet())
+      if (isQuaternionSet()  && R2.isQuaternionSet() )
       {
-        if (m_.isSet() && R2.m_.isSet())
+        if (isMatrixSet() && R2.isMatrixSet())
         {
           return Orientation(Matrix3(m_()*R2.m_()));
         }
@@ -706,7 +706,7 @@ namespace stateObservation
           return Orientation(q_()*R2.q_(),m_()*R2.m_());
         }
       }
-      else if (q_.isSet())
+      else if (isQuaternionSet() )
       {
         return Orientation(Matrix3(quaternionToMatrix_()*R2.m_()));
       }
@@ -720,9 +720,9 @@ namespace stateObservation
     {
       check_();
       R2.check_();
-      if (q_.isSet() && R2.q_.isSet())
+      if (isQuaternionSet()  && R2.isQuaternionSet() )
       {
-        if (m_.isSet() && R2.m_.isSet())
+        if (isMatrixSet() && R2.isMatrixSet())
         {
           return Orientation(Matrix3(m_()*R2.m_()));
         }
@@ -731,7 +731,7 @@ namespace stateObservation
           return Orientation(q_()*R2.q_(),m_()*R2.m_());
         }
       }
-      else if (q_.isSet())
+      else if (isQuaternionSet() )
       {
         return Orientation(Matrix3(q_().toRotationMatrix()*R2.m_()));
       }
@@ -746,9 +746,9 @@ namespace stateObservation
     {
       check_();
       R2.check_();
-      if (q_.isSet() && R2.q_.isSet())
+      if (isQuaternionSet()  && R2.isQuaternionSet() )
       {
-        if (m_.isSet() && R2.m_.isSet())
+        if (isMatrixSet() && R2.isMatrixSet())
         {
           return Orientation(Matrix3(m_()*R2.m_()));
         }
@@ -772,7 +772,7 @@ namespace stateObservation
       check_();
       if (q_.isSet())
       {
-        if (m_.isSet())
+        if (isMatrixSet())
         {
           return Orientation(q_().conjugate(), m_().transpose());
         }
@@ -789,13 +789,31 @@ namespace stateObservation
 
     inline bool Orientation::isSet() const
     {
-      return (m_.isSet() || q_.isSet());
+      return (isMatrixSet() || q_.isSet());
     }
+
+    inline void Orientation::reset()
+    {
+      q_.reset();
+      m_.reset();
+    }
+
+
+    inline bool Orientation::isMatrixSet() const
+    {
+      return (m_.isSet());
+    }
+
+    inline bool Orientation::isQuaternionSet() const
+    {
+      return ( q_.isSet());
+    }
+
 
     inline Vector3 Orientation::operator*( const Vector3& v)
     {
       check_();
-      if (!m_.isSet())
+      if (!isMatrixSet())
       {
         quaternionToMatrix_();
       }
@@ -817,7 +835,7 @@ namespace stateObservation
 
     inline void Orientation::check_() const
     {
-      BOOST_ASSERT((q_.isSet() || m_.isSet()) && "The orientation is not initialized");
+      BOOST_ASSERT((isQuaternionSet()  || isMatrixSet()) && "The orientation is not initialized");
     }
 
     inline Matrix3 & Orientation::quaternionToMatrix_()
