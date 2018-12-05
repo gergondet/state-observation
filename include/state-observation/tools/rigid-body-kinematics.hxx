@@ -799,7 +799,7 @@ namespace stateObservation
       }
     }
 
-    inline Orientation Orientation::integrate(Vector3 dt_x_omega)
+    inline const Orientation & Orientation::integrate(Vector3 dt_x_omega)
     {
       check_();
       if (q_.isSet())
@@ -819,6 +819,7 @@ namespace stateObservation
       {
         m_ = kine::rotationVectorToRotationMatrix(dt_x_omega )*m_();
       }
+      return *this;
     }
 
     inline Vector3 Orientation::differentiate(Orientation R_k1) const
@@ -928,7 +929,7 @@ namespace stateObservation
 
     /// -------------------Kinematics structure implementation--------------
 
-    inline Kinematics Kinematics::integrate(double dt, Flags::byte)
+    inline const Kinematics & Kinematics::integrate(double dt, Flags::byte)
     {
       if (angVel.isSet())
       {
@@ -969,10 +970,12 @@ namespace stateObservation
         }
       }
 
+      return *this;
+
 
     }
 
-    inline Kinematics Kinematics::update(const Kinematics & newValue, double dt, Flags::byte flags)
+    inline const Kinematics & Kinematics::update(const Kinematics & newValue, double dt, Flags::byte flags)
     {
 
 
@@ -1287,7 +1290,7 @@ namespace stateObservation
       BOOST_ASSERT(self->orientation.isSet()
        && "The multiplied orientation is not initialized, the multiplication is not possible");
 
-      BOOST_ASSERT(multiplier.position.isSet() || multiplier.orientation.isSet()
+      BOOST_ASSERT((multiplier.position.isSet() || multiplier.orientation.isSet())
         &&"The multiplier kinematics is not initialized, the multiplication is not possible");
 
 
