@@ -1411,6 +1411,16 @@ namespace stateObservation
       return output;
     }
 
+    inline void Kinematics::reset()
+    {
+      position.reset();
+      orientation.reset();
+      linVel.reset();
+      angVel.reset();
+      linAcc.reset();
+      angAcc.reset();
+    }
+
     template<typename thistype,typename kine>
     inline Kinematics Kinematics::multiply_(thistype* self, kine& multiplier)
     {
