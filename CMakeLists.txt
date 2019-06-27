@@ -15,20 +15,18 @@
 # received a copy of the GNU Lesser General Public License along with
 # state-observation. If not, see <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1)
 
-INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
+include(cmake/base.cmake)
 
-SET(PROJECT_NAME state-observation)
-SET(PROJECT_DESCRIPTION
+set(PROJECT_NAME state-observation)
+set(PROJECT_DESCRIPTION
   "General implementation of observers.")
-SET(PROJECT_URL "")
+set(PROJECT_URL "")
 
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
+set(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
-SET(${PROJECT_NAME}_HEADERS
+set(${PROJECT_NAME}_HEADERS
   include/state-observation/observer/tilt-estimator.hpp
   include/state-observation/observer/extended-kalman-filter.hpp
   include/state-observation/observer/kalman-filter-base.hpp
@@ -87,18 +85,17 @@ SET(${PROJECT_NAME}_HEADERS
   include/state-observation/examples/offline-model-base-flex-estimation.hpp
   include/state-observation/examples/offline-model-base-flex-estimation.hxx
 )
-SET(CXX_DISABLE_WERROR TRUE)
+set(CXX_DISABLE_WERROR TRUE)
 
-SETUP_PROJECT()
+setup_project()
 
-SET(BOOST_COMPONENTS filesystem system thread program_options unit_test_framework timer)
+add_project_dependency(Eigen3 REQUIRED)
+add_project_dependency(Boost REQUIRED filesystem system thread program_options unit_test_framework timer)
 
-SEARCH_FOR_BOOST()
-SEARCH_FOR_EIGEN()
+pkg_config_append_libs(${PROJECT_NAME})
 
-PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
-
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(unit-testings)
-ADD_SUBDIRECTORY(misc-tools)
-SETUP_PROJECT_FINALIZE()
+add_subdirectory(src)
+add_subdirectory(unit-testings)
+add_subdirectory(misc-tools)
+setup_project_finalize()
+setup_project_package_finalize()

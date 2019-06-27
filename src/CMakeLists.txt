@@ -16,7 +16,7 @@
 # prefix and suffix each element of list by ${prefix}elemnt${suffix}
 macro(ADDPREFIX newlist prefix list_name)
     # create empty list - necessary?
-    SET(${newlist})
+    set(${newlist})
 
      # prefix and suffix elements
     foreach(l ${${list_name}})
@@ -29,13 +29,11 @@ if(${_Eigen_VERSION} VERSION_LESS "3.2.0")
     add_definitions(-DEIGEN_VERSION_LESS_THAN_3_2)
 endif()
 
-ADDPREFIX(${PROJECT_NAME}_ABSOLUTE_HEADERS  "${CMAKE_SOURCE_DIR}/"  ${PROJECT_NAME}_HEADERS)
+addprefix(${PROJECT_NAME}_ABSOLUTE_HEADERS  "${CMAKE_SOURCE_DIR}/"  ${PROJECT_NAME}_HEADERS)
 
-SET(LIBRARY_NAME ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME})
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-
-ADD_LIBRARY(${LIBRARY_NAME}
+add_library(${LIBRARY_NAME}
   SHARED
   tilt-estimator.cpp
   kalman-filter-base.cpp
@@ -72,17 +70,19 @@ ADD_LIBRARY(${LIBRARY_NAME}
   ${${PROJECT_NAME}_ABSOLUTE_HEADERS}
   )
 
-SET_TARGET_PROPERTIES(${LIBRARY_NAME}
+set_target_properties(${LIBRARY_NAME}
   PROPERTIES
   SOVERSION ${PROJECT_VERSION}
   INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 
-INSTALL(TARGETS ${LIBRARY_NAME}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${LIBRARY_NAME}
+  EXPORT "${TARGETS_EXPORT_NAME}"
+  DESTINATION lib)
 
-ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.0.0")
-INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIRS})
-SET(LINEAR_ALGEBRA_LIB_FOUND 1)
-SET(_EIGEN_MATRIX_FOUND_ 1)
-
-
+target_link_libraries(${LIBRARY_NAME} PUBLIC rt Boost::boost Boost::disable_autolinking)
+if(TARGET Eigen3::Eigen)
+  target_link_libraries(${LIBRARY_NAME} PUBLIC Eigen3::Eigen)
+else()
+  target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC "${EIGEN3_INCLUDE_DIR}")
+endif()
+target_include_directories(${LIBRARY_NAME} INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
